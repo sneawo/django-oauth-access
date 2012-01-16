@@ -58,11 +58,20 @@ class OAuthAccess(object):
     @property
     def authorize_url(self):
         return self._obtain_setting("endpoints", "authorize")
-    
+
+    @property
+    def provider_scope_delimiter(self):
+        provider_scope_delimiter = self._obtain_setting("endpoints", "provider_scope_delimiter", False)
+        if provider_scope_delimiter:
+            return provider_scope_delimiter
+        return ","
+
     @property
     def provider_scope(self):
-        return self._obtain_setting("endpoints", "provider_scope", False)
-    
+        scope = self._obtain_setting("endpoints", "provider_scope", False)
+        if scope:
+            return self.provider_scope_delimiter.join(scope)
+
     def _obtain_setting(self, k1, k2, required=True):
         name = "OAUTH_ACCESS_SETTINGS"
         service = self.service
@@ -93,6 +102,9 @@ class OAuthAccess(object):
         parameters = {
             "oauth_callback": self.callback_url,
         }
+        scope = self.provider_scope
+        if scope is not None:
+            parameters["scope"] = scope
         client = oauth.Client(self.consumer)
         response, content = client.request(self.request_token_url,
             method = "POST",
@@ -190,7 +202,7 @@ class OAuthAccess(object):
             )
             scope = self.provider_scope
             if scope is not None:
-                params["scope"] = ",".join(scope)
+                params["scope"] = scope
             return self.authorize_url + "?%s" % urllib.urlencode(params)
         else:
             request = oauth.Request.from_consumer_and_token(
