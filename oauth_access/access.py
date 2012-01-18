@@ -210,7 +210,6 @@ class OAuthAccess(object):
                 token = token,
                 http_url = self.authorize_url,
             )
-            request.sign_request(self.signature_method, self.consumer, token)
             return request.to_url()
     
     def persist(self, user, token, identifier=None):
