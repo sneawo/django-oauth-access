@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from oauth_access.access import OAuthAccess
+from oauth_access.access import OAuthAccess, OAuth20Token
 from oauth_access.exceptions import MissingToken
 
 
@@ -22,6 +22,17 @@ def oauth_login(request, service,
 def oauth_callback(request, service):
     ctx = RequestContext(request)
     access = OAuthAccess(service)
+
+    access_token = request.GET.get('access_token', None)
+    signed_request = request.GET.get('signed_request', None)
+    if access_token and signed_request:
+        data = access.parse_signed_request(signed_request)
+        if data:
+            auth_token = OAuth20Token(access_token)
+            return access.callback(request, access, auth_token)
+        else:
+            return render_to_response("oauth_access/oauth_error.html")
+
     unauth_token = request.session.get("%s_unauth_token" % service, None)
     try:
         auth_token = access.check_token(unauth_token, request.GET)
