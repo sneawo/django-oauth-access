@@ -183,7 +183,7 @@ class OAuthAccess(object):
                 # extended permission.
                 expires = response.get("expires", None)
                 if expires:
-                    expires = int(expires)[-1]
+                    expires = int(expires[-1])
                 return OAuth20Token(
                     response["access_token"][-1],
                     expires
