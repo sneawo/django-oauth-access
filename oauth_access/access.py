@@ -254,7 +254,10 @@ class OAuthAccess(object):
                 params.update(kwargs["params"])
                 request_kwargs["body"] = urllib.urlencode(params)
             else:
-                url += "?%s" % urllib.urlencode(dict(access_token=str(token)))
+                params = dict(access_token=str(token))
+                if kwargs.get("params", False):
+                    params.update(kwargs["params"])
+                url += "?%s" % urllib.urlencode(params)
             http = httplib2.Http()
             response, content = http.request(url, **request_kwargs)
         else:
