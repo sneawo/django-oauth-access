@@ -15,6 +15,7 @@ setup(
         "oauth_access",
         "oauth_access.templatetags",
         "oauth_access.utils",
+        "oauth_access.migrations"
     ],
     classifiers = [
         "Development Status :: 3 - Alpha",
