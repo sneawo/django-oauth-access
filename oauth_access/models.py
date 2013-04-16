@@ -10,7 +10,7 @@ class UserAssociation(models.Model):
     user = models.ForeignKey(User)
     service = models.CharField(max_length=75, db_index=True)
     identifier = models.CharField(max_length=255, db_index=True)
-    token = models.CharField(max_length=200)
+    token = models.CharField(max_length=1000)
     expires = models.DateTimeField(null=True)
 
     class Meta:
