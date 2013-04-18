@@ -30,7 +30,8 @@ def oauth_callback(request, service):
             auth_token = OAuth20Token(access_token)
             return access.callback(request, access, auth_token)
         else:
-            return render_to_response("oauth_access/oauth_error.html")
+            ctx.update({"error": "Invalid token."})
+            return render_to_response("oauth_access/oauth_error.html", ctx)
 
     unauth_token = request.session.get("%s_unauth_token" % service, None)
     try:
